@@ -8,6 +8,7 @@ import yaml
 
 from discord.ext import commands
 import discord
+from discord import utils
 
 from cogs.util.checks import is_cleared
 
@@ -189,13 +190,8 @@ class Dev:
     @is_cleared()
     async def hoistuser(self, ctx, *, user_name: str):
         """Gets a user's information from their username & discrim."""
-        found_user = None
-        users = self.bot.get_all_members()
-        for user in users:
-            if str(user).lower() == user_name.lower():
-                found_user = user
-                break
-        else:
+        found_user = discord.utils.find(lambda m: str(m).lower() == user_name, self.bot.get_all_members())
+        if not found_user:
             await self.bot.send(ctx, ':warning: I couldn\'t find that user!')
             return
 
@@ -213,12 +209,8 @@ class Dev:
     @is_cleared()
     async def hoistguild(self, ctx, *, search_term: str):
         """Gets a guild's information."""
-        found_guild = None
-        for guild in self.bot.guilds:
-            if search_term.lower() in guild.name.lower():
-                found_guild = guild
-                break
-        else:
+        found_guild = discord.utils.find(lambda g: g.name.lower() == search_term, self.bot.guilds)
+        if not found_guild:
             await self.bot.send(ctx, ':warning: I couldn\'t find that guild!')
             return
 
